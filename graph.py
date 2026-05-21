@@ -13,10 +13,19 @@ load_dotenv()
 from state import AgentState
 from tools import safe_tools, sensitive_tools
 
+# Retrieve the OpenRouter API key securely across local and cloud environments
+api_key = os.environ.get("OPENROUTER_API_KEY")
+if not api_key or api_key == "your_api_key":
+    try:
+        import streamlit as st
+        api_key = st.secrets.get("OPENROUTER_API_KEY", "your_api_key")
+    except:
+        api_key = "your_api_key"
+
 # Initialize the LLM to use an NVIDIA model via OpenRouter
 llm = ChatOpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key=os.environ.get("OPENROUTER_API_KEY", "your_api_key"),
+    api_key=api_key,
     model="meta-llama/llama-3.1-70b-instruct",
     temperature=0,
     streaming=True,
